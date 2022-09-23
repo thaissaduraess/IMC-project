@@ -1,0 +1,19 @@
+body {
+    background: lavender !important;
+    height: 100vh !important;
+}
+
+table {
+    width: 350px !important;
+}
+
+#card-resultado {
+    width: 300px !important;
+}
+
+#table-imc {
+    display: none;
+}
+
+
+/* text-bg-danger */
