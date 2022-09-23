@@ -28,68 +28,75 @@
                     <input id="peso" type="text" class="form-control" placeholder="ex: 65">
                 </div>
                 <div class="col d-flex align-items-end w-50">
-                    <input class="btn btn-dark flex-grow-1" type="submit" value="Calcular" onclick="executeProcess()" ></input>
+                    <input class="btn btn-dark flex-grow-1" type="submit" value="Calcular"
+                        onclick="executeProcess()"></input>
                 </div>
             </div>
+            <div id="errorResult" hidden="true" role="alert">
 
-                <table id="table-imc" class="table align-self-sm-center m-3">
-                    <tbody>
-                        <tr class="h2 text-center" >
-                            <td colspan="2" id="resultado">...</td>
-                        </tr>
-                        <tr id="abaixoPeso">
-                            <td>abaixo do peso</td>
-                            <td>abaixo 18,5</td>
-                        </tr>
-                        <tr id="pesoNormal"> 
-                            <td>peso normal</td>
-                            <td>18,5 - 24,9</td>
-                        </tr>
-                        <tr id="sobrepeso">
-                            <td>sobrepeso</td>
-                            <td>25 - 29,9</td>
-                        </tr>
-                        <tr id="obesidade1">
-                            <td>obesidade grau 1</td>
-                            <td>30 - 34,9</td>
-                        </tr>
-                        <tr id="obesidade2">
-                            <td>obesidade grau 2</td>
-                            <td>35 - 39,9</td>
-                        </tr>
-                        <tr id="obesidade3">
-                            <td>obesidade grau 3/ mórbida</td>
-                            <td>maior ou = 40</td>
-                        </tr>
-                    </tbody>
-                </table>
+            </div>
+            <table id="table-imc" class="table align-self-sm-center m-3">
+                <tbody>
+                    <tr class="h2 text-center">
+                        <td colspan="2" id="resultado">...</td>
+                    </tr>
+                    <tr id="abaixoPeso">
+                        <td>abaixo do peso</td>
+                        <td>abaixo 18,5</td>
+                    </tr>
+                    <tr id="pesoNormal">
+                        <td>peso normal</td>
+                        <td>18,5 - 24,9</td>
+                    </tr>
+                    <tr id="sobrepeso">
+                        <td>sobrepeso</td>
+                        <td>25 - 29,9</td>
+                    </tr>
+                    <tr id="obesidade1">
+                        <td>obesidade grau 1</td>
+                        <td>30 - 34,9</td>
+                    </tr>
+                    <tr id="obesidade2">
+                        <td>obesidade grau 2</td>
+                        <td>35 - 39,9</td>
+                    </tr>
+                    <tr id="obesidade3">
+                        <td>obesidade grau 3/ mórbida</td>
+                        <td>maior ou = 40</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
 <script>
+    const HIDE_COMMANDS = {
+        SHOW: 'papadinha',
+        HIDE: 'de porco'
+    }
     const bgSuccess = 'bg-success';
     const bgWarning = 'bg-warning';
     const bgDanger = 'bg-danger';
     const bgBlack = 'bg-black';
 
     const IMCDICT = {
-        ABAIXOPESO:{
+        ABAIXOPESO: {
             background: bgWarning,
             row: 'abaixoPeso'
         },
-        PESONORMAL:{
+        PESONORMAL: {
             background: bgSuccess,
             row: 'pesoNormal'
         },
-        SOBREPESO:{
+        SOBREPESO: {
             background: bgWarning,
             row: 'sobrepeso'
         },
-        OBESIDADE1:{
+        OBESIDADE1: {
             background: bgDanger,
             row: 'obesidade1'
         },
-        OBESIDADE2:{
+        OBESIDADE2: {
             background: bgDanger,
             row: 'obesidade2'
         },
@@ -107,7 +114,7 @@
         return !(!value)
     }
 
-    function getElementById(id){
+    function getElementById(id) {
         return document.getElementById(id)
     }
 
@@ -119,24 +126,27 @@
         showResult(imc)
     }
 
-    function hideCard(){
+    function hideCard() {
         var dBlock = getElementById("table-imc");
         dBlock.style.display = dBlock.style.display === 'none' ? '' : 'block';
     }
-    
-    function changeElementById(id, className, message){
-        const result = getElementById(id)
+
+    function changeElementById(id, className, message, hidden) {
+        let result = getElementById(id)
         result.className = className
         if (message)
             result.innerHTML = message
+        if (hidden)
+            result.hidden = !(hidden === HIDE_COMMANDS.SHOW)
     }
 
     function setResultMessage(message, classe, idrow) {
         changeElementById('resultado', classe, message)
         changeElementById(idrow, classe)
     }
-    
-    function getPropsToShow(imc){
+
+
+    function getPropsToShow(imc) {
         if (imc < 18.5) {
             return IMCDICT.ABAIXOPESO
         } else if (imc >= 18.5 && imc < 25) {
@@ -153,7 +163,7 @@
     }
 
     function showResult(IMC) {
-        const props = getPropsToShow(IMC )
+        const props = getPropsToShow(IMC)
         setResultMessage(IMC, props.background, props.row)
     }
 
@@ -163,14 +173,15 @@
 
         const pesoIsValid = isValidValue(peso.value)
         const alturaIsValid = isValidValue(altura.value)
-        
+
         const pesoClass = getClassForm(pesoIsValid)
         const alturaClass = getClassForm(alturaIsValid)
-        
+        peso.className = 'form-control'
+        altura.className = 'form-control'
         peso.classList.add(pesoClass)
         altura.classList.add(alturaClass)
     }
-    
+
     function validate() {
         const peso = getElementById("peso");
         const altura = getElementById("altura");
@@ -182,16 +193,28 @@
         const isInvalid = validate()
         if (isInvalid) {
             showFeedBackInputs()
-            setResultMessage('Formulario invalido', 'bg-danger')
+            changeElementById('errorResult', 'alert alert-danger', 'Formulario invalido', HIDE_COMMANDS.SHOW)
+            // setResultMessage('Formulario invalido', 'bg-danger')
         } else {
+            changeElementById('errorResult', 'alert alert-danger', 'Formulario invalido', HIDE_COMMANDS.HIDE)
+
             showFeedBackInputs()
             calculateIMC()
             hideCard()
         }
 
     }
+    function initFocus() {
+        el = getElementById('altura')
+        el.focus()
+    }
 
-    
+    function startPage() {
+        initFocus()
+    }
+
+    document.addEventListener("load", startPage());
+
 </script>
 
 </html>
