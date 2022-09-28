@@ -121,9 +121,11 @@
     function calculateIMC() {
         const peso = getElementById("peso");
         const altura = getElementById("altura");
-
+        
         const imc = peso.value / (altura.value * altura.value)
+        const arredondado = parseFloat(imc.toFixed(2));
         showResult(imc)
+        showResult(arredondado)
     }
 
     function hideCard() {
